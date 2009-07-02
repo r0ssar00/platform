@@ -11,13 +11,14 @@ using namespace std;
 // mac imports
 #include "platform.h"
 #include "tagdb.h"
+#include "settingsdb.h"
 //#include "osxutils.h"
 
 // library imports
 #include <dbus-c++/dbus.h>  //dbus
 
 // dbus imports
-#include "server-glue.h"
+#include "dbus_server.h"
 
 using namespace DBus;
 
@@ -76,8 +77,7 @@ list<string> FilesForTag;
 list<string> FilesWithTag;
 list<string> FilesInDir;
 // end global list of variables
-string TagDBpath;
-string TagFolder;
+
 // end global list of variables
 
 /* how to sleep
@@ -89,13 +89,7 @@ string TagFolder;
  nanosleep(&tv, NULL);
  }
  */ 
-static std::string int2str(int a) {
-	std::string o = "";
-	char b[4];
-	sprintf(b,"%d",a);
-	o+=b;
-	return o;
-}
+
 void *doadd(void *ptr) {
 	LoadTagDB("/Users/r0ssar00/Development/Git/XTagRev/TagDB.sqlite3");
 	AddTagDB("School/Year 1/ITI1121");
@@ -106,36 +100,12 @@ void *doadd(void *ptr) {
 	return (void*)i;
 }
 
-#include "main.h"
-TagDBsrv::TagDBsrv(DBus::Connection &connection) : ObjectAdaptor(connection, "com.ross.XTagRev.TagDB") {}
-void TagDBsrv::AddTag(const std::string& tagname) {
-		AddTagDB(tagname);
-}
-void TagDBsrv::RmTag(const std::string& tagname) {
-		RmTagDB(string(tagname));
-}
-vector<string> TagDBsrv::GetTagNames() {
-		vector<string> out;
-		vector<TagStruct> tags;
-		vector<TagStruct>::iterator i;
-		for(i=tags.begin();i!=tags.end();i++) {
-			out.push_back(i->name);
-		}
-		return out;
-}
-vector<string> TagDBsrv::GetTagSizes() {
-		vector<string> out;
-		vector<TagStruct> tags;
-		vector<TagStruct>::iterator i;
-		for(i=tags.begin();i!=tags.end();i++) {
-			out.push_back(int2str(i->count));
-		}
-	return out;
-}
+#pragma mark Main
 DBus::BusDispatcher dispatcher;
 void niam(int sig)
 {
 	dispatcher.leave();
+	DestroyMutex();
 }
 
 int main (int argc, char * const argv[]) {
@@ -173,26 +143,28 @@ int main (int argc, char * const argv[]) {
 	// do stuff
 	DestroyMutex();
 	pthread_mutex_destroy(&TagsLock);*/
-	cout << "DBus starting\n";
+	Logging("init mutex");
+	InitMutex();
 	// hey, lets try some dbus stuff
-	cout << "setting up signals\n";
+	Logging("setting up signals");
 	signal(SIGTERM, niam);
 	signal(SIGINT, niam);
-	cout << "setting up dispatcher\n";
+	Logging("setting up dbus dispatcher");
 	DBus::default_dispatcher = &dispatcher;
-	cout << "setting up connection\n";
+	Logging("opening connection to the session bus");
 	DBus::Connection conn = DBus::Connection::SessionBus();
-	cout << "request name\n";
-	conn.request_name("com.ross.XTagRev.TagDB");
-	cout << "creating object\n";
-	TagDBsrv server(conn);
-	cout << "starting mainloop\n";
+	Logging("requesting name");
+	conn.request_name("com.ross");
+	Logging("initializing servers");
+	TagDBsrv TagDB(conn);
+	Platformsrv Platform(conn);
+	Settingssrv Settings(conn);
+	Filesystemsrv Filesystem(conn);
+	Loggersrv Logger(conn);
+	Logging("entering main loop");
 	dispatcher.enter();
+	Logging("destroy mutex");
+	DestroyMutex();
     return 0;
 };
 
-#pragma mark -
-#pragma mark -
-#pragma mark -
-#pragma mark Implementations
-// Platform implementations

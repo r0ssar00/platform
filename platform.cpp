@@ -27,9 +27,54 @@ using namespace std;
 #include <Carbon/Carbon.h>
 #include <CoreServices/CoreServices.h>
 #include <Foundation/Foundation.h>
+#include <time.h>
 #include "osxutils.h"
 #include "platform.h"
 
+vector<string> FsGetTags(string filename) {
+	string tags=FsGetTag(filename);
+	if (tags == "") {
+		return vector<string>();
+	}
+	// tags looks like "some stuff@a tag;@another tag;@a third tag;some more stuff
+	int fi = tags.find_first_of("@");
+	int ls = tags.find_last_of(";");
+	string rtags = tags.substr(fi,tags.length()-ls);
+	vector<string> out;
+	// now get the pre stuff and put it into the 1st entry.  if none, push a blank onto it
+	if (fi != 0) {
+		out.push_back(rtags.substr(0,fi-1));
+	} else {
+		out.push_back("");
+	}
+	// and the post stuff
+	if (ls != tags.length()) {
+		out.push_back(tags.substr(ls+1));
+	} else {
+		out.push_back("");
+	}
+	// rtags looks like "@a tag;@another tag;@a third tag;"
+	while (rtags!="") {
+		cout << rtags <<endl;
+		out.push_back(rtags.substr(rtags.find_first_of("@")+1,rtags.find_first_of(";")-1));
+		rtags = rtags.substr(rtags.find_first_of(";")+1);
+	}
+	return out;
+}
+string FsGetLinkType(string filename) {
+	// one of my tags looks like @tag name;@another tag;kind=a
+	string tags=FsGetTag(filename);
+	if (tags.find("kind=") == string::npos) {
+		return "";
+	}
+	if (tags.substr(tags.find("kind=")+5,1)=="a") {
+		return "alias";
+	} else if (tags.substr(tags.find("kind")+5,1)=="l") {
+		return "link";
+	} else {
+		return "";
+	}
+}
 list<string> FsCat(string arg1) {
 	list<string> out;
 	ifstream input(arg1.c_str());
@@ -90,88 +135,66 @@ int FsRmDir(string arg1) {
 
 list<string> FsLs(string arg1) {
 	list<string> out;
-	DIR *dir;
-	struct dirent *entry;
-	string path;
-	dir = opendir(arg1.c_str());
-	if (dir==NULL) {
-		return out;
-	}
-	while ((entry = readdir(dir)) != NULL) {
-		if (!(string(entry->d_name).compare(".") || string(entry->d_name).compare(".."))) {
-            out.push_back(string(entry->d_name));
-        }
-	}
-	closedir(dir);
+	FsFindFiles(arg1,&out,false,false,false);
 	return out;
 };
 
-list<string> FsFindFiles(string arg1) {
-	list<string> out;
+void FsFindFiles(string arg1, list<string> *out, bool throttle, bool folders, bool recurse) {
 	DIR *dir;
 	struct dirent *entry;
 	string path;
 	dir = opendir(arg1.c_str());
 	if (dir==NULL) {
-		return out;
+		return;
 	}
+	// get rid of . and ..
+	readdir(dir);
+	readdir(dir);
 	while ((entry = readdir(dir)) != NULL) {
-        if (!(string(entry->d_name).compare(".") || string(entry->d_name).compare(".."))) {
-            if (entry->d_type == DT_DIR) {
-                FsFindFiles(arg1+"/"+string(entry->d_name));
-            }
-			if (entry->d_type != DT_DIR) {
-				out.push_back(arg1+string("/")+string(entry->d_name));
+		if (throttle) {
+			usleep(10000);
+		}
+		if (entry->d_type == DT_DIR && (entry->d_name != "." || entry->d_name != "..")) {
+			if (folders) {
+				out->push_back(arg1+string("/")+string(entry->d_name));
 			}
-        }
-		
+			if (recurse) {
+				FsFindFiles(arg1+string("/")+string(entry->d_name),out,throttle,folders);
+			}
+		}
+		if (!folders) {
+			if (entry->d_type != DT_DIR && (entry->d_name != "." || entry->d_name != "..")) {
+				out->push_back(arg1+string("/")+string(entry->d_name));
+			}
+		}
     }
 	closedir(dir);
-	return out;
 };
 
-list<string> FsFindFolders(string arg1) {
-	list<string> out;
-	DIR *dir;
-	struct dirent *entry;
-	string path;
-	dir = opendir(arg1.c_str());
-	if (dir==NULL) {
-		return out;
-	}
-	while ((entry = readdir(dir)) != NULL) {
-        if (!(string(entry->d_name).compare(".") || string(entry->d_name).compare(".."))) {
-            if (entry->d_type == DT_DIR) {
-				out.push_back(arg1+string("/")+string(entry->d_name));
-                FsFindFiles(arg1+"/"+string(entry->d_name));
-            }
-        }
-		
-    }
-	closedir(dir);
-	return out;
+void FsFindFolders(string arg1, list<string> * out, bool throttle) {
+	FsFindFiles(arg1,out,throttle,true);
 };
 
-list<string> FsFind(string arg1) {
-	list<string> files;
-	list<string> folders;
-	files=FsFindFiles(arg1);
-	folders=FsFindFolders(arg1);
-	files.merge(folders);
-	files.sort();
-	return files;
+void FsFind(string arg1, list<string> * out, bool throttle) {
+	FsFindFiles(arg1, out, throttle);
+	FsFindFolders(arg1, out, throttle);
+	out->sort();
 };
 
 int FsLn(string arg1, string arg2, string kind) {
 	if (access(arg1.c_str(),F_OK)==-1) {
-		return 1;
+		return 0;
 	}
 	if (access(arg2.c_str(),F_OK) != -1) {
-		return 1;
+		return 0;
+	}
+	if (kind=="") {
+		return 0;
 	}
 	if (kind=="alias") {
-		if (CreateAlias(arg1.c_str(),arg2.c_str()) != 0) {
-			return 1;
+		int err = CreateAlias(arg1.c_str(),arg2.c_str());
+		if (err != 0) {
+			return 0;
 		}
 		struct stat h;
 		stat(arg1.c_str(),&h);
@@ -184,30 +207,30 @@ int FsLn(string arg1, string arg2, string kind) {
 			// allow you to run it optionally allowing you to see where it points
 			bash.push_back("if [ $1 ]; then");
 			bash.push_back("	if [ \"$1\" = \"-resolve-alias\" ]; then");
-			bash.push_back("		echo \"`hfsdata -e \"$0\"`\";");
+			bash.push_back("		echo \"`dbus-send-nostats --dest=com.ross --print-reply /com/ross/filesystem com.ross.filesystem.ResolveAlias string:\"$0\"`\";");
 			bash.push_back("	else");
-			bash.push_back("		`hfsdata -e \"$0\"` $@");
+			bash.push_back("		`dbus-send-nostats --dest=com.ross --print-reply /com/ross/filesystem com.ross.filesystem.ResolveAlias string:\"$0\"` $@");
 			bash.push_back("	fi;");
 			bash.push_back("else");
-			bash.push_back("	`hfsdata -e \"$0\"` $@;");
+			bash.push_back("	`dbus-send-nostats --dest=com.ross --print-reply /com/ross/filesystem com.ross.filesystem.ResolveAlias string:\"$0\"` $@;");
 			bash.push_back("fi");
 			FsEcho(bash,arg2,true);
 			chmod(arg2.c_str(),S_IRWXU);
 		} else if (((h.st_mode & S_IXUSR) == S_IXUSR || (h.st_mode & S_IXGRP) == S_IXGRP || (h.st_mode & S_IXOTH) == S_IXOTH) &&
 				   ((h.st_mode & S_IFDIR) == S_IFDIR)) {
-			bash.push_back("echo \"`hfsdata -e \"$0\"`\"");
+			bash.push_back("echo \"`dbus-send-nostats --dest=com.ross --print-reply /com/ross/filesystem com.ross.filesystem.ResolveAlias string:\"$0\"`\"");
 			FsEcho(bash,arg2,true);			
 			// since it's a directory, make it easy to cd into by doing cd "`./name_of_dir`"
 			chmod(arg2.c_str(),S_IRWXU);
 		} else {
 			// just show where it points when bash runs it
-			bash.push_back("echo \"`hfsdata -e \"$0\"`\"");
+			bash.push_back("echo \"`dbus-send-nostats --dest=com.ross --print-reply /com/ross/filesystem com.ross.filesystem.ResolveAlias string:\"$0\"`\"");
 			FsEcho(bash,arg2,true);
 		}
 	} else {
-		return symlink(arg1.c_str(),arg2.c_str());
+		return !symlink(arg1.c_str(),arg2.c_str());
 	}
-	return 0;
+	return 1;
 };
 
 int FsCd(string arg1) {
@@ -238,11 +261,11 @@ int FsCpDir(string arg1, string arg2) {
 	list<string> dirs;
 	list<string>::iterator j;
 	list<string> files;
-	dirs=FsFindFolders(arg1);
+	FsFindFolders(arg1,&dirs);
 	for (i=dirs.begin(); i!=dirs.end(); i++) {
 		FsMkDir(*i);
 	}
-	files=FsFindFiles(arg1);
+	FsFindFiles(arg1,&dirs);
 	for (i=files.begin(); i!=files.end(); i++) {
 		FsCp(*i,arg2 + (*i).substr(0,arg1.length()));
 	}
@@ -282,7 +305,10 @@ int FsEcho(list<string> arg1, string arg2, bool append) {
 	}
 	list<string>::iterator i;
 	for (i=arg1.begin(); i != arg1.end(); i++) {
-		fout << (*i) << endl;
+		// need to hack this for settings. :(
+		if (*i!="=") {
+			fout << (*i) << endl;
+		}
 	}
 	fout.close();
 	return 0;
@@ -295,7 +321,39 @@ string FsGetTag(string arg1) {
 int FsSetTag(string arg1, string arg2) {
 	return SetFileComment(arg1, arg2);
 };
-list<string> FsQuery(string arg1) {
+
+int FsAddTag(string arg1, string arg2) {
+	vector<string> tag = FsGetTags(arg1);
+	string outtag = "";
+	tag.push_back(arg2);
+	outtag+=tag[0];
+	for (int i = 2; i < tag.size(); i++) {
+		outtag+="@" + tag[i] + ";";
+	}
+	if (arg2!="") {
+		outtag+="@" + arg2 + ";";
+	}
+	outtag+=tag[1];
+	return FsSetTag(arg1,outtag);
+};
+
+int FsRmTag(string arg1, string arg2) {
+	vector<string> tag = FsGetTags(arg1);
+	vector<string> out;
+	for (int i = 2; i < tag.size(); i++) {
+		if (tag[i]!=arg2) {
+			out.push_back(tag[i]);
+		}
+	}
+	string outtag = "";
+	outtag+=tag[0];
+	for(int i = 0; i < out.size(); i++) {
+		outtag+="@" + out[i] + ";";
+	}
+	outtag+=tag[1];
+	return FsSetTag(arg1,outtag);
+}
+list<string> FsQuery(string arg1, bool throttle) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	list<string> out;
 	int count;
@@ -311,7 +369,9 @@ list<string> FsQuery(string arg1) {
 	}
 	count = MDQueryGetResultCount(query);
 	for (int i = 0; i < count; i++) {
-		usleep(100);
+		if (throttle) {
+			usleep(10000);
+		}
 		MDItemRef item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
 		out.push_back(([(NSString *)MDItemCopyAttribute(item, kMDItemPath) UTF8String]));
 	}
@@ -320,10 +380,17 @@ list<string> FsQuery(string arg1) {
 	[pool drain];
 	return out;
 }
-list<string> FsExecuteQuery(string arg1) {
-	return FsQuery(string(("kMDItemFinderComment == \"*@") + arg1 + ";*\""));
+list<string> FsExecuteQuery(string arg1, bool throttle) {
+	return FsQuery(string(("kMDItemFinderComment == \"*@") + arg1 + ";*\""),throttle);
 };
 
+string FsBasename(string arg1) {
+	return arg1.substr(arg1.find_last_of("/")+1);
+}
+
+string FsResolveAlias(string arg1) {
+	return Resolve(arg1);
+}
 int removedirectoryrecursively(string dirname){
 	DIR *dir;
 	struct dirent *entry;
@@ -348,3 +415,37 @@ int removedirectoryrecursively(string dirname){
 	rmdir(dirname.c_str());
 	return 0;
 };
+bool FsExists(string arg1) {
+	struct stat stFileInfo;
+	int intStat;
+	intStat = stat(arg1.c_str(),&stFileInfo);
+	if (intStat == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+vector<string> ListToVector(list<string> l) {
+	vector<string> out;
+	for (list<string>::iterator i = l.begin(); i != l.end(); i++) {
+		out.push_back(*i);
+	}
+	return out;
+}
+void Logging(string arg1) {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSString * thestr = [NSString stringWithUTF8String:arg1.c_str()];
+	NSLog(thestr);
+	[pool drain];
+}
+string FsAppData() {
+	return FsAppData("");
+}
+string FsAppData(string file) {
+	string out = getenv("HOME");
+#ifdef MACOSX
+	out+="/Library/Application Support/XTagRev/";
+#endif
+	out+=file;
+	return out;
+}

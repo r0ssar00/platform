@@ -72,7 +72,8 @@ string GetFileComment (string spath)
 	}
 	//convert pascal string to c string
 	//strncpy((char *)&cStrCmt, (unsigned char *)&comment+1, comment[0]);
-	comment=(unsigned char *)p2cstr((unsigned char *)&cStrCmt);
+	//comment=(unsigned char *)p2cstr((unsigned char *)&cStrCmt);
+	CopyPascalStringToC(comment,cStrCmt);
 	
 	//if there is no comment, we don't print out anything
 	if (!strlen((char *)&cStrCmt))
@@ -660,18 +661,57 @@ int CreateAlias (const char *srcPath, const char *destPath) {
 	}
 	return 0;
 }
-
-string ResolveAlias (string path)
+string Resolve(string path) {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSString * aliasPath = [NSString stringWithUTF8String: path.c_str()];
+	NSString *resolvedPath = nil;  
+	
+	CFURLRef url = CFURLCreateWithFileSystemPath( kCFAllocatorDefault,  
+												 (CFStringRef)aliasPath,  
+                                                 kCFURLPOSIXPathStyle, NO);  
+	if (url != NULL)  {
+		FSRef fsRef;  
+	if (CFURLGetFSRef(url, &fsRef))  
+	{  
+		Boolean targetIsFolder, wasAliased;  
+		OSErr err = FSResolveAliasFile (&fsRef, true, &targetIsFolder, &wasAliased);  
+		if ((err == noErr) && wasAliased)  
+		{  
+			CFURLRef resolvedUrl = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsRef);  
+			if (resolvedUrl != NULL)  
+			{  
+				resolvedPath = (NSString*)CFURLCopyFileSystemPath(resolvedUrl, kCFURLPOSIXPathStyle);  
+				CFRelease(resolvedUrl);  
+			}  
+		}  
+	}  
+	CFRelease(url);  
+	}
+	
+	// If not resolved, just pass the aliasPath  
+	if (resolvedPath == nil)  
+	{  
+		resolvedPath = aliasPath;  
+	}  
+	string ret = [resolvedPath UTF8String];
+	[pool drain];
+	return ret;
+}  
+string OsxResolveAlias (string path)
 {	
-	FSRef * fileRef;
-	FSPathMakeRef((unsigned char *)path.c_str(), fileRef, NULL);
+	cout << "Begin Resolve\n";
+	FSRef fileRef;
+	Str255 apath;
+	CopyCStringToPascal(path.c_str(),apath);
+	cout << "Path=" << path << "  opath=" << apath << endl;
+	FSPathMakeRef(apath, &fileRef, NULL);
     OSErr	err = noErr;
     static char	srcPath[2048];
     Boolean	isAlias, isFolder;
-	FSRef	aliasRef;
-    
+	//FSRef	aliasRef;
+    cout << "End vars\n";
     //make sure we're dealing with an alias
-    err = FSIsAliasFile (fileRef, &isAlias, &isFolder);
+    err = FSIsAliasFile (&fileRef, &isAlias, &isFolder);
     if (err != noErr)
     {
         return "";
@@ -680,20 +720,21 @@ string ResolveAlias (string path)
     {
         return "";
     }
-    
+    cout << "End test\n";
     //resolve alias --> get file reference to file
-    err = FSResolveAliasFile (fileRef, TRUE, &isFolder, &isAlias);
+    err = FSResolveAliasFile (&fileRef, TRUE, &isFolder, &isAlias);
     if (err != noErr)
     {
         return "";
     }
-    
+    cout << "End Resolve\n";
     //get path to file that alias points to
-    err = FSMakePath(*fileRef, (UInt8 *)&srcPath, strlen(srcPath));
+    err = FSMakePath(fileRef, (UInt8 *)&srcPath, strlen(srcPath));
     if (err != noErr)
 	{
 		return "";
     }
+	cout << "End MakePath\n";
 	return string(srcPath);
 }
 static OSStatus FSMakePath(FSRef fileRef, UInt8 *path, UInt32 maxPathSize)

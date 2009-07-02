@@ -32,7 +32,8 @@ pascal OSErr MoreAEGetCFStringFromDescriptor(const AEDesc* pAEDesc, CFStringRef*
 Boolean MyAEIdleCallback (EventRecord * theEvent,SInt32 * sleepTime,RgnHandle * mouseRgn);
 int CreateAlias (const char *srcPath, const char *destPath);
 static OSStatus FSMakePath(FSRef fileRef, UInt8 *path, UInt32 maxPathSize);
-string ResolveAlias (string path);
+string OsxResolveAlias (string path);
+string Resolve(string path);
 short UnixIsFolder (const char *path);
 static const OSType gFinderSignature = 'MACS';
 #define		MAX_COMMENT_LENGTH	255

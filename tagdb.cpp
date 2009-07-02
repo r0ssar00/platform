@@ -6,6 +6,7 @@
  *
  */
 using namespace std;
+#include <iostream>
 #include <string>
 #include <list>
 #include <vector>
@@ -19,6 +20,7 @@ using namespace sqlite3x;
 #include "platform.h"
 #include "osxutils.h"
 #include "tagdb.h"
+#include "SettingsKeys.h"
 
 pthread_mutex_t TagDBLock;
 void InitMutex() {
@@ -35,14 +37,37 @@ void CreateTagDB(string arg1) {
 	TagDB.close();
 	
 };
-int LoadTagDB(string arg1) {
-	if (FsExecuteQuery("XTagRevDatabaseFile").empty()) {
-		CreateTagDB(arg1);
-		SetFileComment(arg1, "@XTagRevDatabaseFile;");
+bool LoadTagDB(string arg1) {
+	list<string> dbfiles = FsExecuteQuery(TagDBTag);
+	string dbfile = dbfiles.empty()?arg1:dbfiles.front();
+	bool ne = false; //ne=nonexistent
+	if (arg1=="") {
+		// pull the db in from spotlight, if it doesn't exist, create it
+		try {
+			TagDB.open(dbfile);
+		} catch (exception ex) {
+			ne = true;
+		}
+	} else {
+		// pull the db in from arg1, if it doesn't exist, create it
+		try {
+			TagDB.open(dbfile);
+		} catch (exception ex) {
+			ne = true;
+		}
 	}
-	list<string> file = FsExecuteQuery("XTagRevDatabaseFile");
-	TagDB.open(file.empty()?arg1:file.front());
-	return 0;
+	if (ne) {
+		// dbfile doesn't exist, create a default tagdb
+		CreateTagDB(FsAppData("TagDB.sqlite3"));
+		SetFileComment(FsAppData("TagDB.sqlite3"),string("@")+string(TagDBTag)+string(";"));
+		try {
+			TagDB.open(FsAppData("TagDB.sqlite3"));
+		} catch (exception ex) {
+			return false;
+		}
+	}
+	TagDBLoaded(true);
+	return true;
 };
 string int2str(int a) {
 	std::string o = "";
@@ -52,6 +77,8 @@ string int2str(int a) {
 	return o;
 }
 void AddTagDB(string arg1) {
+	if (!TagDBLoaded())
+		return;
 	vector<TagStruct> tags = GetTagDB();
 	pthread_mutex_lock(&TagDBLock);
 	vector<TagStruct>::iterator i;
@@ -66,6 +93,8 @@ void AddTagDB(string arg1) {
 	pthread_mutex_unlock(&TagDBLock);
 };
 void RmTagDB(string arg1) {
+	if (!TagDBLoaded())
+		return;
 	pthread_mutex_lock(&TagDBLock);
 	TagDB.executenonquery("DELETE FROM tagdb_table WHERE tag_name = \"" + arg1 + "\"");
 	pthread_mutex_unlock(&TagDBLock);
@@ -73,6 +102,10 @@ void RmTagDB(string arg1) {
 vector<TagStruct> GetTagDB() {
 	pthread_mutex_lock(&TagDBLock);
 	vector<TagStruct> tags;
+	if (!TagDBLoaded()) {
+		pthread_mutex_unlock(&TagDBLock);
+		return tags;
+	}
 	TagStruct tmp;
 	sqlite3_command tr(TagDB,"SELECT * FROM tagdb_table");
 	sqlite3_cursor trc(tr.executecursor());
@@ -84,3 +117,12 @@ vector<TagStruct> GetTagDB() {
 	pthread_mutex_unlock(&TagDBLock);
 	return tags;
 };
+bool isloaded = false;
+bool TagDBLoaded(bool loaded) {
+	if (isloaded) {
+		return true;
+	} else {
+		isloaded = loaded;
+	}
+	return isloaded;
+}
