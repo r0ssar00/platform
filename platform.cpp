@@ -3,15 +3,14 @@
  *  XTagRev
  *
  *  Created by Kevin Ross on 20/01/09.
- *  Copyright 2009 uOttawa. All rights reserved.
  *
  */
 
 using namespace std;
 #include <string>
+#include <vector>
 #include <list>
 #include <iostream>
-#include <list>
 #include <string>
 #include <fstream>
 #include <cstdio>
@@ -65,10 +64,18 @@ list<string> FsHead(list<string> arg1, int c) {
 list<string> FsTail(list<string> arg1, int c) {
 	list<string>::iterator i;
 	list<string> out;
-	i=arg1.end();
+	list<string> temp;
+	list<string>::iterator j;
+	for(i=arg1.begin(); i!=arg1.end(); i++) {
+		temp.push_back(*i);
+	}
+	j=temp.end();
 	for(;c>0; c--) {
 		i--;
-		out.push_front(*i);
+		temp.push_front(*i);
+	}
+	for(j=temp.begin();j!=temp.end();j++) {
+		out.push_back(*j);
 	}
 	return out;
 };
@@ -146,16 +153,13 @@ list<string> FsFindFolders(string arg1) {
 };
 
 list<string> FsFind(string arg1) {
-	list<string> out;
 	list<string> files;
 	list<string> folders;
 	files=FsFindFiles(arg1);
 	folders=FsFindFolders(arg1);
+	files.merge(folders);
 	files.sort();
-	folders.sort();
-	out=files;
-	out.merge(folders);
-	return out;
+	return files;
 };
 
 int FsLn(string arg1, string arg2, string kind) {

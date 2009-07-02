@@ -1,19 +1,25 @@
 // stl imports
 using namespace std;
 #include <iostream>
+#include <vector>
 #include <list>
 #include <string>
 #include <fstream>
 #include <cstdio>
 
-// c std imports
 // platform imports
-// library importsusing namespace sqlite3x;
 // mac imports
 #include "platform.h"
 #include "tagdb.h"
 //#include "osxutils.h"
 
+// library imports
+#include <dbus-c++/dbus.h>  //dbus
+
+// dbus imports
+#include "server-glue.h"
+
+using namespace DBus;
 
 // Note: executing an alias will return it's path, useful for binaries that are aliased
 
@@ -83,19 +89,58 @@ string TagFolder;
  nanosleep(&tv, NULL);
  }
  */ 
+static std::string int2str(int a) {
+	std::string o = "";
+	char b[4];
+	sprintf(b,"%d",a);
+	o+=b;
+	return o;
+}
 void *doadd(void *ptr) {
 	LoadTagDB("/Users/r0ssar00/Development/Git/XTagRev/TagDB.sqlite3");
-	list<TagStruct> t = GetTagDB();
-	AddTagDB("School/Year 1/ITI1121", t);
-	list<TagStruct> v = GetTagDB();
-	AddTagDB("Hello World 2", v);
+	AddTagDB("School/Year 1/ITI1121");
+	AddTagDB("Hello World 2");
 	FsLn("/Users/r0ssar00/Binaries/safesleep","/Users/r0ssar00/safesleep", "alias");
 	// fix warning by returning void* through a cast
 	int i = 0;
 	return (void*)i;
 }
+
+#include "main.h"
+TagDBsrv::TagDBsrv(DBus::Connection &connection) : ObjectAdaptor(connection, "com.ross.XTagRev.TagDB") {}
+void TagDBsrv::AddTag(const std::string& tagname) {
+		AddTagDB(tagname);
+}
+void TagDBsrv::RmTag(const std::string& tagname) {
+		RmTagDB(string(tagname));
+}
+vector<string> TagDBsrv::GetTagNames() {
+		vector<string> out;
+		vector<TagStruct> tags;
+		vector<TagStruct>::iterator i;
+		for(i=tags.begin();i!=tags.end();i++) {
+			out.push_back(i->name);
+		}
+		return out;
+}
+vector<string> TagDBsrv::GetTagSizes() {
+		vector<string> out;
+		vector<TagStruct> tags;
+		vector<TagStruct>::iterator i;
+		for(i=tags.begin();i!=tags.end();i++) {
+			out.push_back(int2str(i->count));
+		}
+	return out;
+}
+DBus::BusDispatcher dispatcher;
+void niam(int sig)
+{
+	dispatcher.leave();
+}
+
 int main (int argc, char * const argv[]) {
     // insert code here...
+	/*
     std::cout << "Hello, World!\n";
 	list<string> f = FsCat("/Users/r0ssar00/test");
 	std::cout << "Wc -l " << FsWc(f) << endl;
@@ -127,7 +172,22 @@ int main (int argc, char * const argv[]) {
 
 	// do stuff
 	DestroyMutex();
-	pthread_mutex_destroy(&TagsLock);
+	pthread_mutex_destroy(&TagsLock);*/
+	cout << "DBus starting\n";
+	// hey, lets try some dbus stuff
+	cout << "setting up signals\n";
+	signal(SIGTERM, niam);
+	signal(SIGINT, niam);
+	cout << "setting up dispatcher\n";
+	DBus::default_dispatcher = &dispatcher;
+	cout << "setting up connection\n";
+	DBus::Connection conn = DBus::Connection::SessionBus();
+	cout << "request name\n";
+	conn.request_name("com.ross.XTagRev.TagDB");
+	cout << "creating object\n";
+	TagDBsrv server(conn);
+	cout << "starting mainloop\n";
+	dispatcher.enter();
     return 0;
 };
 

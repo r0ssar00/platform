@@ -3,12 +3,12 @@
  *  XTagRev
  *
  *  Created by Kevin Ross on 20/01/09.
- *  Copyright 2009 uOttawa. All rights reserved.
  *
  */
 using namespace std;
 #include <string>
 #include <list>
+#include <vector>
 #include <pthread.h>
 #include "sqlite3x.hpp"
 #include "sqlite3x_settings_db.hpp"
@@ -40,7 +40,8 @@ int LoadTagDB(string arg1) {
 		CreateTagDB(arg1);
 		SetFileComment(arg1, "@XTagRevDatabaseFile;");
 	}
-	TagDB.open(FsExecuteQuery("XTagRevDatabaseFile").empty()?arg1:FsExecuteQuery("XTagRevDatabaseFile").front());
+	list<string> file = FsExecuteQuery("XTagRevDatabaseFile");
+	TagDB.open(file.empty()?arg1:file.front());
 	return 0;
 };
 string int2str(int a) {
@@ -50,17 +51,18 @@ string int2str(int a) {
 	o+=b;
 	return o;
 }
-void AddTagDB(string arg1, list<TagStruct> arg2) {
-	list<TagStruct> tags = arg2;
+void AddTagDB(string arg1) {
+	vector<TagStruct> tags = GetTagDB();
 	pthread_mutex_lock(&TagDBLock);
-	list<TagStruct>::iterator i;
+	vector<TagStruct>::iterator i;
 	for (i=tags.begin(); i!=tags.end(); i++) {
 		if (arg1==(*i).name) {
 			pthread_mutex_unlock(&TagDBLock);
 			return;
 		}
 	}
-	TagDB.executenonquery(string("INSERT INTO tagdb_table VALUES (\"") + arg1 + string("\",") + int2str(FsExecuteQuery(arg1).empty()?0:FsExecuteQuery(arg1).size()) + string(")"));
+	list<string> count = FsExecuteQuery(arg1);
+	TagDB.executenonquery(string("INSERT INTO tagdb_table VALUES (\"") + arg1 + string("\",") + int2str(count.empty()?0:count.size()) + string(")"));
 	pthread_mutex_unlock(&TagDBLock);
 };
 void RmTagDB(string arg1) {
@@ -68,9 +70,9 @@ void RmTagDB(string arg1) {
 	TagDB.executenonquery("DELETE FROM tagdb_table WHERE tag_name = \"" + arg1 + "\"");
 	pthread_mutex_unlock(&TagDBLock);
 };
-list<TagStruct> GetTagDB() {
+vector<TagStruct> GetTagDB() {
 	pthread_mutex_lock(&TagDBLock);
-	list<TagStruct> tags;
+	vector<TagStruct> tags;
 	TagStruct tmp;
 	sqlite3_command tr(TagDB,"SELECT * FROM tagdb_table");
 	sqlite3_cursor trc(tr.executecursor());

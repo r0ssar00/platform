@@ -3,7 +3,6 @@
  *  XTagRev
  *
  *  Created by Kevin Ross on 20/01/09.
- *  Copyright 2009 uOttawa. All rights reserved.
  *
  */
 #ifndef _PLATFORM_H

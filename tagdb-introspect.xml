@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<node name="/com/ross/XTagRev/TagDB">
+  <interface name="com.ross.XTagRev.TagDB">
+    <method name="AddTag">
+      <arg type="s" name="tagname" direction="in"/>
+    </method>
+    <method name="RmTag">
+      <arg type="s" name="tagname" direction="in"/>
+    </method>
+    <method name="GetTagNames">
+      <arg type="as" name="stream" direction="out"/>
+    </method>
+    <method name="GetTagSizes">
+      <arg type="as" name="stream" direction="out"/>
+    </method>
+  </interface>
+</node>
