@@ -1,0 +1,9 @@
+000000000000002900000000000021d8 874a91c2e56bb0400f2789e0d6f54ebb ffffffffffffffffffffffffffffffff 46232 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/osx.o
+000000004a6c77160000000000000097 cf87bde19ad227b60d90d1ae78b5abdd ffffffffffffffffffffffffffffffff 1084 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/dbus_platform.o
+0000000075a1dc0e0000000000018512 d2e8d22e55a17c0427c0566f9a565ce4 ffffffffffffffffffffffffffffffff 16568 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/settings.o
+000000000d3dd39e000000000002f57f 70d5953b401f7b914e69a9e45754a6fe ffffffffffffffffffffffffffffffff 70492 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/tags.o
+000000004a6c76fb000000000000008f ecf7af8fbf56f29b2676644312022230 ffffffffffffffffffffffffffffffff 1084 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/tagdb.o
+000000004a6c76ef000000000000008e 8c5fbc30114c437f16c742590366b1a7 ffffffffffffffffffffffffffffffff 1084 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/core.o
+000000004a6c74dd0000000000000000 2a985dc492a6d8ec7d4cd60193347ca1 ffffffffffffffffffffffffffffffff 1084 /Users/r0ssar00/Development/Git/libplatform/build/libplatform.build/Debug/platform.build/Objects-normal/i386/libplatform.o
+a0c0254d2ed581e326e357dee009b47f d35b1b42b77cd5d99ef158e7e1709556 ffffffffffffffffffffffffffffffff 36984 /Users/r0ssar00/Development/Git/libplatform/build/Debug/libplatform.dylib
+8b3d4b7eadadd3970282ca65ae4baedc 0f32730c567e97cffa56572dc9715787 ffffffffffffffffffffffffffffffff 36984 /Users/r0ssar00/Development/Git/libplatform/build/Debug/liblibplatform.dylib
