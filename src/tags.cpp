@@ -7,7 +7,7 @@
 #include <list>
 #include <iostream>
 #include <cc++/string.h>
-#include "tags.h"
+#include <platform/tags.h>
 // the following includes include the platform-specific methods for accessing tags
 // the include must have SetFileComment and GetFileComment where each uses std::string
 // for values

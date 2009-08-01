@@ -5,7 +5,7 @@
  */
 #include <string>
 #include <list>
-#include "search.h"
+#include <platform/search.h>
 //#ifdef MACOSX
 #include "osx.h"
 //#endif

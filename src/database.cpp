@@ -7,24 +7,23 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-#include "sqlite3x.hpp"
+#include <platform/sqlite3x.hpp>
 #include <cc++/file.h>
-#include "database.h"
-void Tokenize(const std::string& str, std::list<std::string>& tokens, const std::string& delimiters = " ") {
-    // Skip delimiters at beginning.
+#include <platform/database.h>
+void Tokenize(const std::string &str, std::list<std::string> &tokens, const std::string &delimiters = " ") {
+	// Skip delimiters at beginning.
 	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-    // Find first "non-delimiter".
-	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
-	
-    while (std::string::npos != pos || std::string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiters, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiters, lastPos);
-    }
+	// Find first "non-delimiter".
+	std::string::size_type pos = str.find_first_of(delimiters, lastPos);
+
+	while (std::string::npos != pos || std::string::npos != lastPos) {
+		// Found a token, add it to the vector.
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
 }
 
 std::string int2str(int a) {
@@ -77,7 +76,7 @@ int Row::column_count() {
 Column::Column(std::string name, db_types_t type) {
 	data_name = name;
 	data_type = type;
-	data_index = -1;
+	data_index = - 1;
 }
 Column::Column(std::string name, db_types_t type, int index) {
 	data_name = name;
@@ -102,22 +101,22 @@ Table::Table(Database *db, std::string name, bool exists) {
 	error = data_db->execute_statement("CREATE TABLE IF NOT EXISTS " + name + " (row INTEGER PRIMARY KEY)", defer_none);
 }
 Table::Table(Database *db, std::string name, std::list<Column> &columns, bool exists) {
-	Table_init(db,name,columns,exists);
+	Table_init(db, name, columns, exists);
 }
-Table::Table(Database * db, std::string name, std::string columns, bool exists) {
-	//columns looks like: "name type, name type, name type"
-	std::list<std::string> parts,colparts;
+Table::Table(Database *db, std::string name, std::string columns, bool exists) {
+	// columns looks like: "name type, name type, name type"
+	std::list<std::string> parts, colparts;
 	std::list<Column> cols;
 	std::list<std::string>::iterator j;
 	std::string colname;
 	db_types_t coltype;
-	Tokenize(columns,parts,", ");
-	for (std::list<std::string>::iterator i=parts.begin(); i!=parts.end(); ++i) {
-		Tokenize(*i,colparts);
+	Tokenize(columns, parts, ", ");
+	for (std::list<std::string>::iterator i = parts.begin(); i != parts.end(); ++i) {
+		Tokenize(*i, colparts);
 		j = colparts.begin();
-		colname = *(j++);
-		coltype = *j=="INTEGER"?db_type_int:db_type_str;
-		cols.push_back(Column(colname,coltype));
+		colname = *( j++ );
+		coltype = *j == "INTEGER" ? db_type_int : db_type_str;
+		cols.push_back(Column(colname, coltype));
 		j = NULL;
 		colparts.clear();
 	}
@@ -126,31 +125,36 @@ Table::Table(Database * db, std::string name, std::string columns, bool exists) 
 void Table::Table_init(Database *db, std::string name, std::list<Column> &columns, bool exists) {
 	data_db = db;
 	data_name = name;
-	num_columns = 1;
+	num_columns = 0;
 	data_columns = new std::list<Column>();
-	for (std::list<Column>::iterator i = columns.begin(); i!= columns.end(); ++i) {
+	// primary key
+	data_columns->push_back(Column("row", db_type_intkey, num_columns++));
+	// rest of the columns
+	for (std::list<Column>::iterator i = columns.begin(); i != columns.end(); ++i) {
 		data_columns->push_back(Column(i->get_name(), i->get_type(), num_columns++));
 	}
 	if (exists) return;
-	std::string query = "CREATE TABLE IF NOT EXISTS " + name + " (row INTEGER PRIMARY KEY, ";
+	std::string query = "CREATE TABLE IF NOT EXISTS " + name + " (";
 	for (std::list<Column>::iterator i = columns.begin(); i != columns.end(); ++i) {
 		query += i->get_name() + " ";
 		if (i->get_type() == db_type_int) {
 			query += "INTEGER";
 		} else if (i->get_type() == db_type_str) {
 			query += "TEXT";
+		} else if (i->get_type() == db_type_intkey) {
+			query += "INTEGER PRIMARY KEY";
 		}
 		query += ", ";
 	}
 	query.erase(query.length() - 2, 2);
 	query += ")";
-	error = data_db->execute_statement(query,defer_none);
+	error = data_db->execute_statement(query, defer_none);
 }
 Table::~Table() {
 	delete data_columns;
 }
 void Table::add_row(Row &data, defer_types_t deferred) {
-	if (data.column_count()!=data_columns->size()) {
+	if (data.column_count() != data_columns->size()) {
 		error = 1;
 		return;
 	}
@@ -165,18 +169,32 @@ void Table::add_row(Row &data, defer_types_t deferred) {
 	query += ")";
 	error = data_db->execute_statement(query, deferred);
 }
+
+void Table::mod_row(int rowid, Row &data, defer_types_t deferred) {
+// UPDATE OR IGNORE table_name SET column1 = value1, column2 = value2, ... WHERE row = rowid
+	std::string query = "UPDATE OR IGNORE " + data_name + " SET ";
+	std::list<Column>::iterator j = data_columns->begin();
+	for (std::list<Object>::iterator i = data.begin(); i != data.end(); ++i) {
+		query += ( j++ )->get_name() + " = " + i->as_string();
+		query += ", ";
+	}
+	query.erase(query.length() - 2, 2);
+	query += " WHERE row = " + rowid;
+	error = data_db->execute_statement(query, deferred);
+}
+
 void Table::add_column(Column column, bool exists) {
 	if (!exists) {
 		std::string query = "ALTER TABLE " + data_name + " ADD COLUMN ";
 		query += column.get_name() + " ";
-		query += column.get_type() == db_type_int ? "INTEGER" : "TEXT";
+		query += column.get_type() == db_type_int ? "INTEGER" : column.get_type() == db_type_str ? "TEXT" : "";
 		error = data_db->execute_statement(query, defer_none);
 	}
 	if (!error || exists)
-		data_columns->push_back(Column(column.get_name(),column.get_type(),num_columns++));
+		data_columns->push_back(Column(column.get_name(), column.get_type(), num_columns++));
 }
-void Table::add_columns(std::list<Column> & columns, bool exists) {
-	for (std::list<Column>::iterator i=columns.begin(); i!=columns.end(); ++i) {
+void Table::add_columns(std::list<Column> &columns, bool exists) {
+	for (std::list<Column>::iterator i = columns.begin(); i != columns.end(); ++i) {
 		add_column(*i, exists);
 	}
 }
@@ -250,7 +268,7 @@ int Database::execute_query(std::string selector, Table &table, std::list<Row> *
 }
 int Database::execute_statement(std::string statement, defer_types_t deferred) {
 	lock();
-	if (deferred==defer_force) {
+	if (deferred == defer_force) {
 		deferred_statements.push_back(statement);
 		return 0;
 	}
@@ -270,8 +288,8 @@ int Database::commit() {
 	try {
 		sqlite3x::sqlite3_transaction trans(DB);
 		{
-			for (std::list<std::string>::iterator i=deferred_statements.begin(); i!=deferred_statements.end(); ++i) {
-				sqlite3x::sqlite3_command cmd(DB,i->c_str());
+			for (std::list<std::string>::iterator i = deferred_statements.begin(); i != deferred_statements.end(); ++i) {
+				sqlite3x::sqlite3_command cmd(DB, i->c_str());
 				cmd.executenonquery();
 			}
 		}
@@ -297,8 +315,8 @@ void Database::lock() {
 	// block until the lock is released
 	while (locked) {
 		timespec t;
-		t.tv_nsec=100;
-		nanosleep(&t, (timespec*)NULL);
+		t.tv_nsec = 100;
+		nanosleep(&t, (timespec *) NULL);
 	}
 	locked = true;
 }

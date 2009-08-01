@@ -1,0 +1,1 @@
+settings.o settings.o: settings.cpp

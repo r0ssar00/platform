@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		50149BDA09E781A5002DEE6A /* libplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 50149BD909E781A5002DEE6A /* libplatform.h */; };
 		5073E0CB09E734E500EC74B6 /* libplatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* libplatform.cpp */; };
+		6702182810200B2A00F908E7 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784BE56101E9B8A00E2F04A /* libsqlite3.dylib */; };
+		6702184D10200DF400F908E7 /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 6702184C10200DF400F908E7 /* search.h */; };
 		6784B427101CAE1C00E2F04A /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 6784B426101CAE1C00E2F04A /* core.h */; };
 		6784B429101CAE2700E2F04A /* database.h in Headers */ = {isa = PBXBuildFile; fileRef = 6784B428101CAE2700E2F04A /* database.h */; };
 		6784B42B101CAE2E00E2F04A /* tags.h in Headers */ = {isa = PBXBuildFile; fileRef = 6784B42A101CAE2E00E2F04A /* tags.h */; };
@@ -39,7 +41,6 @@
 		6784BE4B101E9B3400E2F04A /* sqlite3x_settings_db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE43101E9B3400E2F04A /* sqlite3x_settings_db.cpp */; };
 		6784BE4C101E9B3400E2F04A /* sqlite3x_settings_db.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6784BE44101E9B3400E2F04A /* sqlite3x_settings_db.hpp */; };
 		6784BE4D101E9B3400E2F04A /* sqlite3x_transaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */; };
-		6784BE57101E9B8A00E2F04A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784BE56101E9B8A00E2F04A /* libsqlite3.dylib */; };
 		6784BE58101E9B9D00E2F04A /* sqlite3x_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE3F101E9B3400E2F04A /* sqlite3x_command.cpp */; };
 		6784BE59101E9B9D00E2F04A /* sqlite3x_connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE40101E9B3400E2F04A /* sqlite3x_connection.cpp */; };
 		6784BE5A101E9B9D00E2F04A /* sqlite3x_cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE41101E9B3400E2F04A /* sqlite3x_cursor.cpp */; };
@@ -74,6 +75,7 @@
 		5073E0C409E734A800EC74B6 /* libplatform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = libplatform.cpp; sourceTree = "<group>"; };
 		5073E0C609E734A800EC74B6 /* libplatformProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = libplatformProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* libplatformTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = libplatformTarget.xcconfig; sourceTree = "<group>"; };
+		6702184C10200DF400F908E7 /* search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = search.h; sourceTree = "<group>"; };
 		6784B426101CAE1C00E2F04A /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		6784B428101CAE2700E2F04A /* database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database.h; sourceTree = "<group>"; };
 		6784B42A101CAE2E00E2F04A /* tags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tags.h; sourceTree = "<group>"; };
@@ -123,7 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6784BE57101E9B8A00E2F04A /* libsqlite3.dylib in Frameworks */,
+				6702182810200B2A00F908E7 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,13 +159,14 @@
 		0867D691FE84028FC02AAC07 /* libplatform */ = {
 			isa = PBXGroup;
 			children = (
+				6784C0E9101FB10500E2F04A /* osx */,
 				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
 				6784BE2A101E9AB900E2F04A /* sqlite3x */,
 				6784B485101CB67F00E2F04A /* libccgnu2.dylib */,
 				6784B440101CB2C300E2F04A /* libccext2.dylib */,
 				6784B43C101CB26500E2F04A /* libsqlite3cpp.dylib */,
 				6784B58C101CE90700E2F04A /* test.cpp */,
-				6784B40D101CAD9C00E2F04A /* include */,
+				6784B40D101CAD9C00E2F04A /* platform */,
 				08FB77ACFE841707C02AAC07 /* src */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DDFF38A45A11DB9C8B /* Products */,
@@ -193,7 +196,6 @@
 				6784B434101CAE8100E2F04A /* tags.cpp */,
 				6784B436101CAE8C00E2F04A /* settings.cpp */,
 				6784B438101CAE9600E2F04A /* dbus_platform.cpp */,
-				6784B77E101CFCBE00E2F04A /* osx.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -207,24 +209,24 @@
 			name = "Configuration Files";
 			sourceTree = "<group>";
 		};
-		6784B40D101CAD9C00E2F04A /* include */ = {
+		6784B40D101CAD9C00E2F04A /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				6784BE3E101E9B3400E2F04A /* sqlite3x.hpp */,
 				50149BD909E781A5002DEE6A /* libplatform.h */,
 				6784B426101CAE1C00E2F04A /* core.h */,
 				6784B428101CAE2700E2F04A /* database.h */,
 				6784B42A101CAE2E00E2F04A /* tags.h */,
+				6702184C10200DF400F908E7 /* search.h */,
 				6784B42C101CAE3F00E2F04A /* settings.h */,
 				6784B42E101CAE6200E2F04A /* dbus_platform.h */,
-				6784B5C8101CF57500E2F04A /* osx.h */,
 			);
-			path = include;
+			path = platform;
 			sourceTree = "<group>";
 		};
 		6784BE2A101E9AB900E2F04A /* sqlite3x */ = {
 			isa = PBXGroup;
 			children = (
-				6784BE3E101E9B3400E2F04A /* sqlite3x.hpp */,
 				6784BE3F101E9B3400E2F04A /* sqlite3x_command.cpp */,
 				6784BE40101E9B3400E2F04A /* sqlite3x_connection.cpp */,
 				6784BE41101E9B3400E2F04A /* sqlite3x_cursor.cpp */,
@@ -234,6 +236,15 @@
 				6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */,
 			);
 			path = sqlite3x;
+			sourceTree = "<group>";
+		};
+		6784C0E9101FB10500E2F04A /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				6784B5C8101CF57500E2F04A /* osx.h */,
+				6784B77E101CFCBE00E2F04A /* osx.cpp */,
+			);
+			path = osx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +272,7 @@
 				6784B5C9101CF57500E2F04A /* osx.h in Headers */,
 				6784BE46101E9B3400E2F04A /* sqlite3x.hpp in Headers */,
 				6784BE4C101E9B3400E2F04A /* sqlite3x_settings_db.hpp in Headers */,
+				6702184D10200DF400F908E7 /* search.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +439,8 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = libplatform;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
@@ -446,8 +460,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACH_O_TYPE = mh_dylib;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-v";
-				OTHER_LDFLAGS = "-v";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
@@ -467,10 +481,11 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/";
 				MACH_O_TYPE = mh_dylib;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-v";
-				OTHER_LDFLAGS = "-v";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
@@ -491,10 +506,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
 				MACH_O_TYPE = mh_execute;
-				OTHER_LDFLAGS = (
-					"-v",
-					"-L$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
-				);
+				OTHER_LDFLAGS = "-L$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
@@ -511,6 +523,8 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
 				MACH_O_TYPE = mh_execute;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
@@ -528,6 +542,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = sqlite3x;
 			};
@@ -543,6 +558,8 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = sqlite3x;
 				ZERO_LINK = NO;
