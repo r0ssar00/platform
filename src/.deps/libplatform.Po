@@ -1,1 +1,0 @@
-libplatform.o libplatform.o: libplatform.cpp

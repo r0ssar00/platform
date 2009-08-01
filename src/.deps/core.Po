@@ -1,1 +1,0 @@
-core.o core.o: core.cpp

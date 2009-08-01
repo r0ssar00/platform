@@ -14,9 +14,6 @@ profile
 Makefile
 Makefile.in
 
-# The local aclocal.m4 file
-aclocal.m4
-
 # The output of the configure script
 config.guess
 config.log
@@ -47,7 +44,6 @@ autom4te.cache/*
 *.l[ao]i
 *.dylib
 *.dSYM
-m4
 doc
 .libs/*
 .deps/*

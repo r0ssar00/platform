@@ -1,1 +1,0 @@
-dbus_platform.o dbus_platform.o: dbus_platform.cpp
