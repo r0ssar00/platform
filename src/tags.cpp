@@ -12,7 +12,7 @@
 // the include must have SetFileComment and GetFileComment where each uses std::string
 // for values
 #ifdef MACOSX
- #include "osx.h"
+ #include "osx/osx.h"
 #endif
 TagSet::TagSet() {
 	err = false;

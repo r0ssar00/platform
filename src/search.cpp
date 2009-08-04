@@ -7,7 +7,7 @@
 #include <list>
 #include <platform/search.h>
 //#ifdef MACOSX
-#include "osx.h"
+#include "osx/osx.h"
 //#endif
 
 Search::Search() {
