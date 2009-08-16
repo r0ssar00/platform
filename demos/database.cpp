@@ -9,16 +9,9 @@
 #include <map>
 #include <vector>
 #include <iostream>
-#include <platform/tags.h>
 #include <platform/database.h>
 #define N_ELEMS( a ) (sizeof(a)/sizeof(*a)) 
-// Using database:
-enum tablename_t {
-	tablename_Column1 = 0,
-	tablename_Column2,
-	tablename_Column3
-};
-// then 
+
 int main(int argc, char *argv[]) {
 	std::cout << "Creating database @ " << argv[1] << std::endl;
 	std::string dbfile = argv[1];

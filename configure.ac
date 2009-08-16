@@ -79,6 +79,8 @@ AC_CONFIG_FILES([Makefile
                  osx/Makefile
                  sqlite3x/Makefile
                  src/Makefile
+		 tests/Makefile
+		 demos/Makefile
 		 doc/Doxyfile
 		 doc/Makefile])
 AC_OUTPUT

@@ -47,3 +47,4 @@ autom4te.cache/*
 doc
 .libs/*
 .deps/*
+*/.libs/*
