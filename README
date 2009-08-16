@@ -1,0 +1,3 @@
+Welcome to the source for platform.
+You can compile this using standard configure/make/make install
+or if you use OSX, you may optionally compile with XCode.

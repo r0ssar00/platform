@@ -48,3 +48,5 @@ doc
 .libs/*
 .deps/*
 */.libs/*
+demos/database_test
+tests/test
