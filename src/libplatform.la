@@ -14,10 +14,10 @@ library_names='libplatform.0.dylib libplatform.dylib'
 old_library='libplatform.a'
 
 # Linker flags that can not go in dependency_libs.
-inherited_linker_flags='  -framework Carbon -framework Foundation -framework CoreServices'
+inherited_linker_flags='  -kthread -framework Carbon -framework Foundation -framework CoreServices'
 
 # Libraries that this one depends upon.
-dependency_libs=' -lstdc++ -lsqlite3'
+dependency_libs=' -lstdc++ -L/opt/local/lib /opt/local/lib/libsqlite3.la /usr/lib/libccext2.la -lz /usr/lib/libccgnu2.la -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/Users/r0ssar00/test_install/lib'
+libdir='/usr/local/lib'

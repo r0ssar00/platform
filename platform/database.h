@@ -1,9 +1,3 @@
-#ifndef PLATFORM_DATABASE_H
-#define PLATFORM_DATABASE_H
-#include <map>
-#include <vector>
-#include <string>
-#include <platform/sqlite3x.hpp>
 /** @file database.h
  *  @license GPLv2
  *  @author Kevin Ross <r0ssar00@gmail.com> Copyright (C) 2009 Kevin Ross
@@ -13,6 +7,13 @@
  *  about sqlite statements.  Core class is the Database.  You create Tables associated
  *  with a database to which you can add Columns and then Rows.
  */
+#ifndef PLATFORM_DATABASE_H
+#define PLATFORM_DATABASE_H
+#include <map>
+#include <vector>
+#include <string>
+#include <platform/sqlite3x.hpp>
+#include <platform/types.h>
 /**
  * @short the column type enumeration
  */
@@ -32,31 +33,10 @@ enum db_types_t {
  */
 enum defer_types_t {
 	//! Force the call to defer until commit is called
-	defer_force = 0,
+	defer_yes = 0,
 	//! Force the call to commit immediately
-	defer_none
+	defer_no
 };
-
-class Database;
-class Table;
-class Column;
-class Row;
-class Object;
-
-/**
- * @short the typedefs
- */
-typedef std::string str;
-typedef std::vector<Column> col_list;
-typedef col_list::iterator col_list_i;
-typedef std::vector<Row> row_list;
-typedef row_list::iterator row_list_i;
-typedef std::vector<str> str_list;
-typedef str_list::iterator str_list_i;
-typedef std::vector<Object> obj_list;
-typedef obj_list::iterator obj_list_i;
-typedef std::map<Column, Object> col_obj_map;
-typedef std::pair<Column, Object> col_obj_pair;
 
 // type converters
 str type_to_string(db_types_t data);
@@ -124,6 +104,8 @@ class Row {
 public:
 	//! Creates an empty Row
 	Row();
+	//! @short Creates a Row with a specified Column set
+	Row(col_list cols);
 	//! @short Creates a Row, filling it with data
 	//! @param data The initial data to fill the Row with
 	Row(col_obj_map data);
@@ -132,6 +114,7 @@ public:
 	//! @param col The Column the data fits in
 	//! @param data The column data to add
 	Row * add(Column col, Object data);
+	Row * add(str col, Object data);
 	//! @short Get the row data as a Column-Object mapping of data
 	//! @param The columns defined for this row
 	col_obj_map as_col_obj_map();
@@ -142,7 +125,9 @@ public:
 	//! @short Get the number of columns in this row
 	//! @return The number of columns
 	size_t column_count();
+	str to_string();
 private:
+	col_list data_columns;
 	col_obj_map data_set; // stores the column data
 };
 /**
@@ -160,7 +145,7 @@ public:
 	//! @details Use strings like "name TYPE" where TYPE is TEXT,INTEGER.  The string
 	//! should be a valid SQL type
 	//! @param sql_string SQL type
-	Column(str sql_string, int index = -1);
+	Column(str sql_string, int index);
 	//! @short Creates a new column with a name and type
 	//! @param name The name of the column
 	//! @param type The type of the column
@@ -173,7 +158,7 @@ public:
 	//! @param name The name of the column
 	//! @param type The type of the column
 	//! @param index The index of the column
-	Column(str name, db_types_t type, int index = -1);
+	Column(str name, db_types_t type, int index);
 	//! @short Get the data type of the Column
 	//! @return the type
 	db_types_t get_type() const;
@@ -188,6 +173,7 @@ public:
 	int get_index() const;
 	str get_sql_string() const;
 	friend bool operator <(const Column&a, const Column&b);
+	str to_string();
 private:
 	str data_name; // stores the column name
 	db_types_t data_type;  // stores the column tyoe
@@ -227,22 +213,23 @@ public:
 	//! @param name The name of this table
 	//! @param columns The table's schema
 	//! @param exists Defaults to true.  Whether this table already exists in the database on disk.
+	//! @param ... variable number of strings specifying columns.  Terminate with a "NULL"
 	Table(Database * db, str name, bool exists, ...);
 	~Table();
 	//! @short Add a row to the database.
 	//! @details The number of data items in the Row must equal the number of Columns in the table.
-	//! This function can also be part of a transaction by setting deferred to defer_force and then
+	//! This function can also be part of a transaction by setting deferred to defer_yes and then
 	//! calling Database::commit() when all operations are queued up.
 	//! @param data The Row data to add
 	//! @param deferred Whether to include this addition in a transaction
-	void add_row(Row & data, defer_types_t deferred = defer_none);
+	void add_row(Row & data, defer_types_t deferred = defer_no);
 	//! @short Modify a row in the database
 	//! @details You should perform a direct query on the Database instance to find the rowid of the row
 	//! you wish to modify
 	//! @param rowid The row whose data should be replaced
 	//! @param data The data to replace the row with
 	//! @param deferred Whether to include this modification in a transaction
-	void mod_row(int rowid, Row & data, defer_types_t deferred = defer_none);
+	void mod_row(int rowid, Row & data, defer_types_t deferred = defer_no);
 	//! @short Add a column to the Table
 	//! @details If the column doesn't exist in the database on disk, set exists to false
 	//! @param column The Column to add
@@ -260,11 +247,14 @@ public:
 	//! @short Gets the name of the table
 	//! @return the name
 	str get_name();
-	//! @short Gets a pointer to a list<Column>
+	//! @short Gets a pointer to a col_list<Column>
 	//! @return a pointer to list<Column>
 	col_list * get_columns();
+	//! @short Gets a particular Column by name
+	//! @return the Column
+	Column get_column(str name);
 	//! @short Gets the entire set of rows from the Table
-	//! @return The data in the table in a list<Row>
+	//! @return The data in the table in a row_list
 	row_list get_rows();
 	//! @short Get the last error code.
 	//! @details returns 0 if no error, >0 otherwise
@@ -275,6 +265,7 @@ public:
 	//! @param query The selector for sqlite
 	//! @return list<Row>, null if error
 	row_list query(str query);
+	str to_string();
 private:
 	// initialize the database with a set of columns
 	void Table_init(Database *db, str name, col_list &columns, bool exists);
@@ -306,7 +297,7 @@ public:
 	//! @param statement The sql command to execute
 	//! @param deferred Whether to defer until commit() or not
 	//! @return The error code, 0 if successful
-	int execute_statement(str statement, defer_types_t deferred = defer_none);
+	int execute_statement(str statement, defer_types_t deferred = defer_no);
 	//! @short Commit all deferred commands to the database.
 	//! @return The error code, 0 if successful
 	int commit();

@@ -49,7 +49,6 @@
 		6784BE5E101E9B9D00E2F04A /* sqlite3x_transaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */; };
 		6784BE5F101E9BA600E2F04A /* sqlite3x.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6784BE3E101E9B3400E2F04A /* sqlite3x.hpp */; settings = {ATTRIBUTES = (Private, ); }; };
 		6784BE64101E9BD600E2F04A /* sqlite3x_settings_db.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6784BE44101E9B3400E2F04A /* sqlite3x_settings_db.hpp */; settings = {ATTRIBUTES = (Private, ); }; };
-		67E41FE210252CD3000CEABE /* shared_database.c in Sources */ = {isa = PBXBuildFile; fileRef = 67E41FE110252CD3000CEABE /* shared_database.c */; };
 		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
@@ -108,8 +107,8 @@
 		6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3x_transaction.cpp; sourceTree = "<group>"; };
 		6784BE52101E9B5100E2F04A /* libsqlite3x.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite3x.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		6784BE56101E9B8A00E2F04A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		67E41FDD10252CC1000CEABE /* shared_database */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = shared_database; path = build/Release/shared_database; sourceTree = "<group>"; };
-		67E41FE110252CD3000CEABE /* shared_database.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shared_database.c; sourceTree = "<group>"; };
+		67E41FDD10252CC1000CEABE /* shared_database */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shared_database; sourceTree = BUILT_PRODUCTS_DIR; };
+		67F399E3102F4BCA00902720 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		D2AAC09D05546B4700DB518D /* libplatform.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libplatform.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -170,7 +169,6 @@
 		0867D691FE84028FC02AAC07 /* libplatform */ = {
 			isa = PBXGroup;
 			children = (
-				67E41FA5102528D6000CEABE /* shared_database */,
 				6784C0E9101FB10500E2F04A /* osx */,
 				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
 				6784BE2A101E9AB900E2F04A /* sqlite3x */,
@@ -232,6 +230,7 @@
 				6702184C10200DF400F908E7 /* search.h */,
 				6784B42C101CAE3F00E2F04A /* settings.h */,
 				6784B42E101CAE6200E2F04A /* dbus_platform.h */,
+				67F399E3102F4BCA00902720 /* types.h */,
 			);
 			path = platform;
 			sourceTree = "<group>";
@@ -257,14 +256,6 @@
 				6784B77E101CFCBE00E2F04A /* osx.cpp */,
 			);
 			path = osx;
-			sourceTree = "<group>";
-		};
-		67E41FA5102528D6000CEABE /* shared_database */ = {
-			isa = PBXGroup;
-			children = (
-				67E41FE110252CD3000CEABE /* shared_database.c */,
-			);
-			name = shared_database;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -414,7 +405,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67E41FE210252CD3000CEABE /* shared_database.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

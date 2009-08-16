@@ -9,7 +9,18 @@
 #include <cc++/file.h>
 #include <platform/database.h>
 using namespace std;
-
+str spacer(str data, int width) {
+	if (data.length() > width) {
+		return data.substr(0,width-data.length());
+	} else if (data.length() == width) {
+		return data;
+	}
+	string ret = data;
+	for (int i = data.length(); i < width; i++) {
+		ret+=" ";
+	}
+	return ret;
+}
 vector<string> split(const string& s, const string& delim, const bool keep_empty = true) {
     vector<string> result;
     if (delim.empty()) {
@@ -108,11 +119,17 @@ Object Object::operator ()() {
 }
 Row::Row() {
 }
+Row::Row(col_list cols) {
+	data_columns = cols;
+}
 Row::Row(col_obj_map data) {
 	data_set = data;
 }
 Row * Row::add(Column col, Object data) {
 	data_set.insert(col_obj_pair(col,data));
+	return this;
+}
+Row * Row::add(str col, Object data) {
 	return this;
 }
 size_t Row::column_count() {
@@ -124,6 +141,15 @@ Object Row::data_for_col(Column col) {
 		return i->second();
 	}
 	return Object();
+}
+str Row::to_string() {
+	str ret = "";/*
+	col_obj_map::iterator i = data_set.begin();
+	for (; i < data_set.end(); ++i) {
+		// i->first = col, i->second = data
+		ret+=spacer(i->second().as_string(), 10);
+	}*/
+	return ret;
 }
 Column::Column(str sql_string, int index) {
 	// data looks like "name TYPE"
@@ -167,7 +193,7 @@ Table::Table(Database *db, str name, bool exists) {
 	num_columns = 0;
 	data_columns = new col_list();
 	if (exists) return;
-	error = data_db->execute_statement("CREATE TABLE IF NOT EXISTS " + name + " (row INTEGER PRIMARY KEY)", defer_none);
+	error = data_db->execute_statement("CREATE TABLE IF NOT EXISTS " + name + " (row INTEGER PRIMARY KEY)", defer_no);
 }
 Table::Table(Database *db, str name, bool exists, ...) {
 	data_db = db;
@@ -205,7 +231,7 @@ void Table::Table_init(Database *db, str name, col_list &columns, bool exists) {
 	}
 	query.erase(query.length() - 2, 2);
 	query += ")";
-	error = data_db->execute_statement(query, defer_none);
+	error = data_db->execute_statement(query, defer_no);
 }
 Table::~Table() {
 	delete data_columns;
@@ -288,7 +314,7 @@ void Table::add_column(Column column, bool exists) {
 		str query = "ALTER TABLE " + data_name + " ADD COLUMN ";
 		query += column.get_name() + " ";
 		query += column.get_type() == db_type_int ? "INTEGER" : column.get_type() == db_type_str ? "TEXT" : "";
-		error = data_db->execute_statement(query, defer_none);
+		error = data_db->execute_statement(query, defer_no);
 	}
 	if (!error || exists)
 		data_columns->push_back(Column(column.get_name(), column.get_type(), num_columns++));
@@ -316,6 +342,14 @@ str Table::get_name() {
 }
 col_list *Table::get_columns() {
 	return data_columns;
+}
+Column Table::get_column(str name) {
+	for (col_list_i i = data_columns->begin(); i!= data_columns->end(); ++i) {
+		if (i->get_name()==name) {
+			return *i;
+		}
+	}
+	return Column("NULL", db_type_null);
 }
 row_list Table::get_rows() {
 	return query("*");
@@ -368,7 +402,7 @@ int Database::execute_query(str selector, Table &table, row_list &results) {
 	return DB.errorcode();
 }
 int Database::execute_statement(str statement, defer_types_t deferred) {
-	if (deferred == defer_force) {
+	if (deferred == defer_yes) {
 		deferred_statements.push_back(statement);
 		return 0;
 	}

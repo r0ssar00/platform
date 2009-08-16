@@ -4,7 +4,7 @@
 <plist version="1.0">
 <dict>
      <key>CFBundleName</key>
-     <string>libplatform</string>
+     <string>platform</string>
      <key>CFBundleIdentifier</key>
      <string>com.r0ssar00.libplatform.docset</string>
      <key>DocSetFeedName</key>

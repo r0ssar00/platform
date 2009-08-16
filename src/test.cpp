@@ -34,5 +34,6 @@ int main(int argc, char *argv[]) {
 	std::cout << "Creating database @ " << argv[1] << std::endl;
 	std::string dbfile = argv[1];
 	Database hello(dbfile);
-	Table (hello, "hello_world", false, "col1 TEXT", "col2 INTEGER", "col3 TEXT", "col4 TEXT", "col5 INTEGER", "NULL");
+	Table tbl(&hello, "hello_world", false, "col1 TEXT", "col2 INTEGER", "col3 TEXT", "col4 TEXT", "col5 INTEGER", "NULL");
+	
 }

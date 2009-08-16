@@ -33,6 +33,10 @@
           <Name>Table</Name>
           <Path>class_table.html</Path>
          </Node>
+         <Node>
+          <Name>TagSet</Name>
+          <Path>class_tag_set.html</Path>
+         </Node>
         </Subnodes>
        </Node>
        <Node>
@@ -54,6 +58,10 @@
          <Node>
           <Name>/Users/r0ssar00/Development/Git/platform/platform/dbus_platform.h</Name>
           <Path>dbus__platform_8h.html</Path>
+         </Node>
+         <Node>
+          <Name>/Users/r0ssar00/Development/Git/platform/platform/libplatform.h</Name>
+          <Path>libplatform_8h.html</Path>
          </Node>
          <Node>
           <Name>/Users/r0ssar00/Development/Git/platform/platform/search.h</Name>
