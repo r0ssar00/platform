@@ -130,7 +130,19 @@ Row *Row::add(Column col, Object data) {
 	return this;
 }
 Row *Row::add(str col, Object data) {
-	return add(Column(col, 0), data);
+	return add(Column(col, -1), data);
+}
+Row *Row::add(Column col, str data) {
+	return add(col, Object(data));
+}
+Row *Row::add(str col, str data) {
+	return add(Column(col, -1), Object(data));
+}
+Row *Row::add(Column col, int data) {
+	return add(col, Object(data));
+}
+Row *Row::add(str col, int data) {
+	return add(Column(col,-1), Object(data));
 }
 size_t Row::column_count() {
 	return data_set.size();

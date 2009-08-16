@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		50149BDA09E781A5002DEE6A /* libplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 50149BD909E781A5002DEE6A /* libplatform.h */; };
-		5073E0CB09E734E500EC74B6 /* libplatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5073E0C409E734A800EC74B6 /* libplatform.cpp */; };
 		6702182810200B2A00F908E7 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784BE56101E9B8A00E2F04A /* libsqlite3.dylib */; };
 		6702184D10200DF400F908E7 /* search.h in Headers */ = {isa = PBXBuildFile; fileRef = 6702184C10200DF400F908E7 /* search.h */; };
 		6784B427101CAE1C00E2F04A /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 6784B426101CAE1C00E2F04A /* core.h */; };
@@ -25,7 +24,6 @@
 		6784B486101CB67F00E2F04A /* libccgnu2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784B485101CB67F00E2F04A /* libccgnu2.dylib */; };
 		6784B589101CE8E900E2F04A /* libsqlite3cpp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784B43C101CB26500E2F04A /* libsqlite3cpp.dylib */; };
 		6784B58A101CE8E900E2F04A /* libccgnu2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784B485101CB67F00E2F04A /* libccgnu2.dylib */; };
-		6784B58D101CE90700E2F04A /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784B58C101CE90700E2F04A /* test.cpp */; };
 		6784B5C9101CF57500E2F04A /* osx.h in Headers */ = {isa = PBXBuildFile; fileRef = 6784B5C8101CF57500E2F04A /* osx.h */; };
 		6784B5D2101CF5F500E2F04A /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784B5D1101CF5F500E2F04A /* CoreFoundation.framework */; };
 		6784B60F101CFC4100E2F04A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6784B60E101CFC4100E2F04A /* CoreServices.framework */; };
@@ -49,6 +47,8 @@
 		6784BE5E101E9B9D00E2F04A /* sqlite3x_transaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */; };
 		6784BE5F101E9BA600E2F04A /* sqlite3x.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6784BE3E101E9B3400E2F04A /* sqlite3x.hpp */; settings = {ATTRIBUTES = (Private, ); }; };
 		6784BE64101E9BD600E2F04A /* sqlite3x_settings_db.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6784BE44101E9B3400E2F04A /* sqlite3x_settings_db.hpp */; settings = {ATTRIBUTES = (Private, ); }; };
+		67E02052103848C1006A2511 /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67E02051103848C1006A2511 /* database.cpp */; };
+		67E02056103848D8006A2511 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67E02055103848D8006A2511 /* test.cpp */; };
 		D2AAC0B105546B7500DB518D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB77AAFE841565C02AAC07 /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
@@ -72,7 +72,6 @@
 /* Begin PBXFileReference section */
 		08FB77AAFE841565C02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		50149BD909E781A5002DEE6A /* libplatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libplatform.h; sourceTree = "<group>"; };
-		5073E0C409E734A800EC74B6 /* libplatform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = libplatform.cpp; sourceTree = "<group>"; };
 		5073E0C609E734A800EC74B6 /* libplatformProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = libplatformProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* libplatformTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = libplatformTarget.xcconfig; sourceTree = "<group>"; };
 		6702184C10200DF400F908E7 /* search.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = search.h; sourceTree = "<group>"; };
@@ -90,7 +89,6 @@
 		6784B440101CB2C300E2F04A /* libccext2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libccext2.dylib; path = /usr/lib/libccext2.dylib; sourceTree = "<absolute>"; };
 		6784B485101CB67F00E2F04A /* libccgnu2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libccgnu2.dylib; path = /usr/lib/libccgnu2.dylib; sourceTree = "<absolute>"; };
 		6784B584101CE8C400E2F04A /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
-		6784B58C101CE90700E2F04A /* test.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = test.cpp; path = src/test.cpp; sourceTree = "<group>"; };
 		6784B5C8101CF57500E2F04A /* osx.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = osx.h; sourceTree = "<group>"; };
 		6784B5D1101CF5F500E2F04A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		6784B60E101CFC4100E2F04A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
@@ -107,7 +105,8 @@
 		6784BE45101E9B3400E2F04A /* sqlite3x_transaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sqlite3x_transaction.cpp; sourceTree = "<group>"; };
 		6784BE52101E9B5100E2F04A /* libsqlite3x.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite3x.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		6784BE56101E9B8A00E2F04A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		67E41FDD10252CC1000CEABE /* shared_database */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shared_database; sourceTree = BUILT_PRODUCTS_DIR; };
+		67E02051103848C1006A2511 /* database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database.cpp; sourceTree = "<group>"; };
+		67E02055103848D8006A2511 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test.cpp; sourceTree = "<group>"; };
 		67F399E3102F4BCA00902720 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		D2AAC09D05546B4700DB518D /* libplatform.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libplatform.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -128,13 +127,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6702182810200B2A00F908E7 /* libsqlite3.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		67E41FDB10252CC1000CEABE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,7 +153,6 @@
 				D2AAC09D05546B4700DB518D /* libplatform.dylib */,
 				6784B584101CE8C400E2F04A /* test */,
 				6784BE52101E9B5100E2F04A /* libsqlite3x.dylib */,
-				67E41FDD10252CC1000CEABE /* shared_database */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,13 +160,14 @@
 		0867D691FE84028FC02AAC07 /* libplatform */ = {
 			isa = PBXGroup;
 			children = (
+				67E0204E103848A6006A2511 /* demos */,
+				67E0204D1038489B006A2511 /* tests */,
 				6784C0E9101FB10500E2F04A /* osx */,
 				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
 				6784BE2A101E9AB900E2F04A /* sqlite3x */,
 				6784B485101CB67F00E2F04A /* libccgnu2.dylib */,
 				6784B440101CB2C300E2F04A /* libccext2.dylib */,
 				6784B43C101CB26500E2F04A /* libsqlite3cpp.dylib */,
-				6784B58C101CE90700E2F04A /* test.cpp */,
 				6784B40D101CAD9C00E2F04A /* platform */,
 				08FB77ACFE841707C02AAC07 /* src */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -200,7 +192,6 @@
 		08FB77ACFE841707C02AAC07 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				5073E0C409E734A800EC74B6 /* libplatform.cpp */,
 				6784B430101CAE6F00E2F04A /* core.cpp */,
 				6784B432101CAE7B00E2F04A /* database.cpp */,
 				6784B434101CAE8100E2F04A /* tags.cpp */,
@@ -256,6 +247,22 @@
 				6784B77E101CFCBE00E2F04A /* osx.cpp */,
 			);
 			path = osx;
+			sourceTree = "<group>";
+		};
+		67E0204D1038489B006A2511 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				67E02055103848D8006A2511 /* test.cpp */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		67E0204E103848A6006A2511 /* demos */ = {
+			isa = PBXGroup;
+			children = (
+				67E02051103848C1006A2511 /* database.cpp */,
+			);
+			path = demos;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,22 +331,6 @@
 			productReference = 6784BE52101E9B5100E2F04A /* libsqlite3x.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		67E41FDC10252CC1000CEABE /* shared_database */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 67E41FE310252CD3000CEABE /* Build configuration list for PBXNativeTarget "shared_database" */;
-			buildPhases = (
-				67E41FDA10252CC1000CEABE /* Sources */,
-				67E41FDB10252CC1000CEABE /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = shared_database;
-			productName = shared_database;
-			productReference = 67E41FDD10252CC1000CEABE /* shared_database */;
-			productType = "com.apple.product-type.tool";
-		};
 		D2AAC09C05546B4700DB518D /* platform */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "platform" */;
@@ -374,7 +365,6 @@
 				D2AAC09C05546B4700DB518D /* platform */,
 				6784B583101CE8C400E2F04A /* test */,
 				6784BE51101E9B5100E2F04A /* sqlite3x */,
-				67E41FDC10252CC1000CEABE /* shared_database */,
 			);
 		};
 /* End PBXProject section */
@@ -384,7 +374,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6784B58D101CE90700E2F04A /* test.cpp in Sources */,
+				67E02052103848C1006A2511 /* database.cpp in Sources */,
+				67E02056103848D8006A2511 /* test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,18 +392,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		67E41FDA10252CC1000CEABE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2AAC09A05546B4700DB518D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5073E0CB09E734E500EC74B6 /* libplatform.cpp in Sources */,
 				6784B431101CAE6F00E2F04A /* core.cpp in Sources */,
 				6784B433101CAE7B00E2F04A /* database.cpp in Sources */,
 				6784B435101CAE8100E2F04A /* tags.cpp in Sources */,
@@ -601,36 +584,6 @@
 			};
 			name = Release;
 		};
-		67E41FDF10252CC3000CEABE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
-				PRODUCT_NAME = shared_database;
-			};
-			name = Debug;
-		};
-		67E41FE010252CC3000CEABE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
-				PRODUCT_NAME = shared_database;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -666,15 +619,6 @@
 			buildConfigurations = (
 				6784BE53101E9B5200E2F04A /* Debug */,
 				6784BE54101E9B5200E2F04A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		67E41FE310252CD3000CEABE /* Build configuration list for PBXNativeTarget "shared_database" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				67E41FDF10252CC3000CEABE /* Debug */,
-				67E41FE010252CC3000CEABE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

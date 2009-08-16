@@ -96,9 +96,10 @@ class Object {
 		db_types_t d_type; // stores the type
 };
 /** @short Row stores the data for an entire row.
- *  @details Row stores this data in a list which you can iterate through using
- *  the begin() and end() methods provided.  begin() is the first column and end()
- *  the last from left to right.
+ *  @details Row stores this data in a list which you can iterate through.
+ *  the last from left to right. <br/>
+ *  Don't use the Columns in the Row because the indices are missing.  Call
+ *  get_columns on a Table to get the proper list of columns.
  */
 class Row {
 	public:
@@ -115,6 +116,10 @@ class Row {
 		// ! @param data The column data to add
 		Row *add(Column col, Object data);
 		Row *add(str col, Object data);
+		Row *add(Column col, str data);
+		Row *add(str col, str data);
+		Row *add(Column col, int data);
+		Row *add(str col, int data);
 		// ! @short Get the row data as a Column-Object mapping of data
 		// ! @param The columns defined for this row
 		col_obj_map as_col_obj_map();
