@@ -5,10 +5,10 @@
  */
 #ifndef PLATFORM_TAGS_H
 #define PLATFORM_TAGS_H
-class TagSet {
+class TaggedFile {
 public:
-	TagSet();
-	TagSet(std::string file);
+	TaggedFile();
+	TaggedFile(std::string file);
 	void add_tag(std::string tag);
 	void rm_tag(std::string tag);
 	std::list<std::string> * get_tags();

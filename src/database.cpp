@@ -11,35 +11,35 @@
 using namespace std;
 str spacer(str data, int width) {
 	if (data.length() > width) {
-		return data.substr(0,width-data.length());
+		return data.substr(0, width - data.length());
 	} else if (data.length() == width) {
 		return data;
 	}
 	string ret = data;
 	for (int i = data.length(); i < width; i++) {
-		ret+=" ";
+		ret += " ";
 	}
 	return ret;
 }
-vector<string> split(const string& s, const string& delim, const bool keep_empty = true) {
-    vector<string> result;
-    if (delim.empty()) {
-        result.push_back(s);
-        return result;
-    }
-    string::const_iterator substart = s.begin(), subend;
-    while (true) {
-        subend = search(substart, s.end(), delim.begin(), delim.end());
-        string temp(substart, subend);
-        if (keep_empty || !temp.empty()) {
-            result.push_back(temp);
-        }
-        if (subend == s.end()) {
-            break;
-        }
-        substart = subend + delim.size();
-    }
-    return result;
+vector<string> split(const string &s, const string &delim, const bool keep_empty = true) {
+	vector<string> result;
+	if (delim.empty()) {
+		result.push_back(s);
+		return result;
+	}
+	string::const_iterator substart = s.begin(), subend;
+	while (true) {
+		subend = search(substart, s.end(), delim.begin(), delim.end());
+		string temp(substart, subend);
+		if (keep_empty || !temp.empty()) {
+			result.push_back(temp);
+		}
+		if (subend == s.end()) {
+			break;
+		}
+		substart = subend + delim.size();
+	}
+	return result;
 }
 
 
@@ -52,20 +52,20 @@ str int2str(int a) {
 };
 str type_to_string(db_types_t data) {
 	if (data == db_type_int) {
-		return str("INTEGER");
-	} else if (data==db_type_str) {
-		return str("TEXT");
-	} else if (data==db_type_intkey) {
-		return str("INTEGER PRIMARY KEY");
+		return "INTEGER";
+	} else if (data == db_type_str) {
+		return "TEXT";
+	} else if (data == db_type_intkey) {
+		return "INTEGER PRIMARY KEY";
 	}
 	return "NULL";
 }
 db_types_t string_to_type(str data) {
-	if (data=="INTEGER") {
+	if (data == "INTEGER") {
 		return db_type_int;
-	} else if (data=="TEXT") {
+	} else if (data == "TEXT") {
 		return db_type_str;
-	} else if (data=="INTEGER PRIMARY KEY") {
+	} else if (data == "INTEGER PRIMARY KEY") {
 		return db_type_intkey;
 	} else {
 		return db_type_null;
@@ -94,15 +94,15 @@ bool Object::is_string() const {
 bool Object::is_null() const {
 	return d_type == db_type_null;
 }
-bool Object::compare (Object & a) {
+bool Object::compare(Object &a) {
 	if (this->is_int()) {
 		if (a.is_int()) {
-			return this->as_int()<a.as_int();
+			return this->as_int() < a.as_int();
 		} else {
-			return this->as_string()<a.as_string();
+			return this->as_string() < a.as_string();
 		}
 	} else {
-		return this->as_string()<a.as_string();
+		return this->as_string() < a.as_string();
 	}
 }
 str Object::as_string() const {
@@ -114,7 +114,7 @@ str Object::as_string() const {
 int Object::as_int() const {
 	return data_int;
 }
-Object Object::operator ()() {
+Object Object::operator() () {
 	return *this;
 }
 Row::Row() {
@@ -125,30 +125,30 @@ Row::Row(col_list cols) {
 Row::Row(col_obj_map data) {
 	data_set = data;
 }
-Row * Row::add(Column col, Object data) {
-	data_set.insert(col_obj_pair(col,data));
+Row *Row::add(Column col, Object data) {
+	data_set.insert(col_obj_pair(col, data));
 	return this;
 }
-Row * Row::add(str col, Object data) {
-	return this;
+Row *Row::add(str col, Object data) {
+	return add(Column(col, 0), data);
 }
 size_t Row::column_count() {
 	return data_set.size();
 }
 Object Row::data_for_col(Column col) {
 	col_obj_map::iterator i = data_set.find(col);
-	if (i!=data_set.end()) {
+	if (i != data_set.end()) {
 		return i->second();
 	}
 	return Object();
 }
 str Row::to_string() {
-	str ret = "";/*
+	str ret = "|";
 	col_obj_map::iterator i = data_set.begin();
-	for (; i < data_set.end(); ++i) {
+	for (; i != data_set.end(); ++i) {
 		// i->first = col, i->second = data
-		ret+=spacer(i->second().as_string(), 10);
-	}*/
+		ret += "    " + spacer(i->second().as_string(), 10) + "|" ;
+	}
 	return ret;
 }
 Column::Column(str sql_string, int index) {
@@ -156,9 +156,11 @@ Column::Column(str sql_string, int index) {
 	data_sql_string = sql_string;
 	str_list tokens;
 	tokens = split(sql_string, " ");
-	data_name = tokens[0];
+	data_name = tokens[ 0 ];
 	str type = "";
-	for (str_list_i i = tokens.begin(); i != tokens.end(); ++i) {
+	str_list_i i = tokens.begin();
+	i++;
+	for (; i != tokens.end(); ++i) {
 		type += *i;
 	}
 	data_type = string_to_type(type);
@@ -183,9 +185,11 @@ db_types_t Column::get_type() const {
 int Column::get_index() const {
 	return data_index;
 }
-
-bool operator <(const Column&a, const Column& b) {
-	return a.get_name()<b.get_name();
+str Column::to_string() const {
+	return spacer(data_name, 10);
+}
+bool operator < ( const Column &a, const Column &b ) {
+	return a.get_name() < b.get_name();
 }
 Table::Table(Database *db, str name, bool exists) {
 	data_db = db;
@@ -196,17 +200,17 @@ Table::Table(Database *db, str name, bool exists) {
 	error = data_db->execute_statement("CREATE TABLE IF NOT EXISTS " + name + " (row INTEGER PRIMARY KEY)", defer_no);
 }
 Table::Table(Database *db, str name, bool exists, ...) {
-	data_db = db;
-	data_name = name;
-	num_columns = 0;
-	data_columns = new col_list();
-	if (exists) return;
+	col_list t;
 	va_list args;
 	va_start(args, exists);
-	while (data_columns->back().get_type()!=db_type_null) {
-		data_columns->push_back(Column(va_arg(args, const char *), num_columns++));
+	str col_str = "";
+	while (col_str != "NULL") {
+		col_str = va_arg(args, const char *);
+		if (col_str != "NULL")
+			t.push_back(Column(col_str, num_columns++));
 	}
 	va_end(args);
+	Table_init(db, name, t, exists);
 }
 Table::Table(Database *db, str name, col_list &columns, bool exists) {
 	Table_init(db, name, columns, exists);
@@ -226,7 +230,7 @@ void Table::Table_init(Database *db, str name, col_list &columns, bool exists) {
 	str query = "CREATE TABLE IF NOT EXISTS " + name + " (";
 	for (col_list_i i = data_columns->begin(); i != data_columns->end(); ++i) {
 		query += i->get_name() + " ";
-		query+=type_to_string(i->get_type());
+		query += type_to_string(i->get_type());
 		query += ", ";
 	}
 	query.erase(query.length() - 2, 2);
@@ -237,37 +241,38 @@ Table::~Table() {
 	delete data_columns;
 }
 class generate_add {
-public:
-	generate_add(str & query, Row & data) {
-		data_query = query;
-		row_data = data;
-	}
-	void operator() (const Column & data) {
-		if (!row_data.data_for_col(data).is_null()) {
-			data_query += prefix(data);
-			data_query += row_data.data_for_col(data).is_string() ? "\"" : "";
-			data_query += row_data.data_for_col(data).as_string();
-			data_query += row_data.data_for_col(data).is_string() ? "\"" : "";
-			data_query += ", ";
+	public:
+		generate_add(str & query, Row & data) {
+			data_query = &query;
+			row_data = &data;
 		}
-	}
-private:
-	str data_query;
-	Row row_data;
-	str prefix(const Column & data) {
-		return "";
-	}
+		void operator() (const Column &data) {
+			if (!row_data->data_for_col(data).is_null()) {
+				*data_query += prefix(data);
+				*data_query += row_data->data_for_col(data).is_string() ? "\"" : "";
+				*data_query += row_data->data_for_col(data).as_string();
+				*data_query += row_data->data_for_col(data).is_string() ? "\"" : "";
+				*data_query += ", ";
+			}
+		}
+	private:
+		str *data_query;
+		Row *row_data;
+		str prefix(const Column &data) {
+			return "";
+		}
 };
 class generate_mod : public generate_add {
-public:
-	generate_mod(str & query, Row & data) : generate_add(query, data) {};
-private:
-	str prefix(const Column & data) {
-		return data.get_name() + " = ";
-	}
+	public:
+		generate_mod(str & query, Row & data) : generate_add(query, data) {
+		};
+	private:
+		str prefix(const Column &data) {
+			return data.get_name() + " = ";
+		}
 };
 void Table::add_row(Row &data, defer_types_t deferred) {
-	if (data.column_count()+1 != data_columns->size()) {
+	if (data.column_count() + 1 != data_columns->size()) {
 		error = 1;
 		return;
 	}
@@ -275,12 +280,12 @@ void Table::add_row(Row &data, defer_types_t deferred) {
 	col_list_i i = data_columns->begin();
 	i++;
 	/*
-	for (; i != data_columns->end(); ++i) {
-		query += data.data_for_col(*i).is_string() ? "\"" : "";
-		query += data.data_for_col(*i).as_string();
-		query += data.data_for_col(*i).is_string() ? "\"" : "";
-		query += ", ";
-	}
+	   for (; i != data_columns->end(); ++i) {
+	        query += data.data_for_col(*i).is_string() ? "\"" : "";
+	        query += data.data_for_col(*i).as_string();
+	        query += data.data_for_col(*i).is_string() ? "\"" : "";
+	        query += ", ";
+	   }
 	 */
 	std::for_each(i, data_columns->end(), generate_add(query, data));
 	query.erase(query.length() - 2, 2);
@@ -294,21 +299,20 @@ void Table::mod_row(int rowid, Row &data, defer_types_t deferred) {
 	col_list_i j = data_columns->begin();
 	j++;
 	/*
-	for (; j != data_columns->end(); ++j) {
-		query += j->get_name();
-		query += " = ";
-		query += data.data_for_col(*j).is_string()?"\"":"";
-		query += data.data_for_col(*j).as_string();
-		query += data.data_for_col(*j).is_string()?"\"":"";
-		query += ", ";
-	}
+	   for (; j != data_columns->end(); ++j) {
+	        query += j->get_name();
+	        query += " = ";
+	        query += data.data_for_col(*j).is_string()?"\"":"";
+	        query += data.data_for_col(*j).as_string();
+	        query += data.data_for_col(*j).is_string()?"\"":"";
+	        query += ", ";
+	   }
 	 */
 	std::for_each(j, data_columns->end(), generate_mod(query, data));
 	query.erase(query.length() - 2, 2);
 	query += " WHERE row = " + int2str(rowid);
 	error = data_db->execute_statement(query, deferred);
 }
-
 void Table::add_column(Column column, bool exists) {
 	if (!exists) {
 		str query = "ALTER TABLE " + data_name + " ADD COLUMN ";
@@ -327,8 +331,10 @@ void Table::add_columns(col_list &columns, bool exists) {
 void Table::add_columns(bool exists, ...) {
 	va_list args;
 	va_start(args, exists);
-	while (data_columns->back().get_type()!=db_type_null) {
-		data_columns->push_back(Column(va_arg(args, const char *), num_columns++));
+	str arg = va_arg(args, const char *);
+	while (arg != "NULL") {
+		add_column(Column(va_arg(args, const char *), - 1), exists);
+		arg = va_arg(args, const char *);
 	}
 	va_end(args);
 }
@@ -344,8 +350,8 @@ col_list *Table::get_columns() {
 	return data_columns;
 }
 Column Table::get_column(str name) {
-	for (col_list_i i = data_columns->begin(); i!= data_columns->end(); ++i) {
-		if (i->get_name()==name) {
+	for (col_list_i i = data_columns->begin(); i != data_columns->end(); ++i) {
+		if (i->get_name() == name) {
 			return *i;
 		}
 	}
@@ -356,6 +362,34 @@ row_list Table::get_rows() {
 }
 int Table::get_error() {
 	return error;
+}
+str Table::to_string() {
+	str data = " ";
+	for (int j = 0; j < num_columns - 1; j++) {
+		data += "---------------";
+	}
+	data += "-\n";
+	data += " |";
+	col_list_i i = data_columns->begin();
+	i++;
+	for (; i != data_columns->end(); ++i) {
+		data += "    " + i->to_string() + "|";
+	}
+	data += "\n ";
+	for (int j = 0; j < num_columns - 1; j++) {
+		data += "---------------";
+	}
+	data += "-\n";
+	row_list rows = query("*");
+	for (row_list_i i = rows.begin(); i != rows.end(); ++i) {
+		data += " " + i->to_string() + "\n";
+	}
+	data += " ";
+	for (int j = 0; j < num_columns - 1; j++) {
+		data += "---------------";
+	}
+	data += "-\n";
+	return data;
 }
 Database::Database() {
 	loaded = false;
@@ -388,12 +422,21 @@ int Database::execute_query(str selector, Table &table, row_list &results) {
 		while (cur.step()) {
 			for (col_list_i i = columns.begin(); i != columns.end(); ++i) {
 				if (i->get_type() == db_type_int) {
-					tempdata.insert(col_obj_pair(*i,Object(cur.getint(i->get_index()))));
+					tempdata.insert(
+					        col_obj_pair(*i,
+					                     Object(cur.getint(i->get_index()))
+					                     )
+					        );
 				} else if (i->get_type() == db_type_str) {
-					tempdata.insert(col_obj_pair(*i,Object(cur.getstring(i->get_index()))));
+					tempdata.insert(
+					        col_obj_pair(*i,
+					                     Object(cur.getstring(i->get_index()))
+					                     )
+					        );
 				}
 			}
 			results.push_back(Row(tempdata));
+			tempdata.clear();
 		}
 	} catch(sqlite3x::database_error e) {
 		cout << e.what() << endl;

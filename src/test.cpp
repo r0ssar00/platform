@@ -20,20 +20,23 @@ enum tablename_t {
 };
 // then 
 int main(int argc, char *argv[]) {
-	std::string file("/Users/r0ssar00/Binaries/cliclick");
-	TagSet * output;
-	output = new TagSet(file);
-	bool err = output->get_error();
-	if (err) {
-		std::cout << "Error getting tags!" << std::endl;
-	}
-	std::list<std::string> * results = output->get_tags();
-	for (std::list<std::string>::iterator i = results->begin(); i != results->end(); i++) {
-		std::cout << "Tag: " << *i << std::endl;
-	}
 	std::cout << "Creating database @ " << argv[1] << std::endl;
 	std::string dbfile = argv[1];
 	Database hello(dbfile);
-	Table tbl(&hello, "hello_world", false, "col1 TEXT", "col2 INTEGER", "col3 TEXT", "col4 TEXT", "col5 INTEGER", "NULL");
-	
+	std::cout << "Adding table hello_world" << std::endl;
+	Table tbl(&hello, "hello_world", false, "col12345 TEXT", "col2 INTEGER", "col3 TEXT", "col4 INTEGER", "NULL");
+	std::cout << "Creating row 1" << std::endl;
+	Row * data = new Row();
+	data->add("col12345", Object("col1_row1"))->add("col2", Object(1))->add("col3", Object("col3_row1"))->add("col4", Object(4));
+	std::cout << "Adding row 1" << std::endl;
+	tbl.add_row(*data);
+	delete data;
+	std::cout << "Creating row 2" << std::endl;
+	data = new Row();
+	data->add("col12345", Object("col1_row2"))->add("col2", Object(2))->add("col3", Object("col3_row2"))->add("col4", Object(5));
+	std::cout << "Adding row 2" << std::endl;
+	tbl.add_row(*data);
+	delete data;
+	std::cout << "Printing table to stdout" << std::endl;
+	std::cout << tbl.to_string() << std::endl;
 }

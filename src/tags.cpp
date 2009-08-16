@@ -14,13 +14,13 @@
 #ifdef MACOSX
  #include "osx/osx.h"
 #endif
-TagSet::TagSet() {
+TaggedFile::TaggedFile() {
 	err = false;
 	file = "";
 	pre = "";
 	post = "";
 }
-TagSet::TagSet(std::string file) {
+TaggedFile::TaggedFile(std::string file) {
 	this->file = file;
 	std::string file_tags = GetFileComment(file);
 	if (file_tags=="") {
@@ -29,7 +29,7 @@ TagSet::TagSet(std::string file) {
 	}
 	process(file_tags);
 }
-void TagSet::process(std::string comment) {
+void TaggedFile::process(std::string comment) {
 	std::string temp;
 	if (comment == "") {
 		err = true;
@@ -43,24 +43,24 @@ void TagSet::process(std::string comment) {
 		temp = temp.substr(temp.find_first_of(";")+1);
 	}
 }
-void TagSet::add_tag(std::string tag) {
+void TaggedFile::add_tag(std::string tag) {
 	tags.push_back(tag);
 }
-void TagSet::rm_tag(std::string tag) {
+void TaggedFile::rm_tag(std::string tag) {
 	tags.remove(tag);
 }
-std::list<std::string> * TagSet::get_tags() {
+std::list<std::string> * TaggedFile::get_tags() {
 	return &tags;
 }
-std::string TagSet::get_pre() {
+std::string TaggedFile::get_pre() {
 	return pre;
 }
-std::string TagSet::get_post() {
+std::string TaggedFile::get_post() {
 	return post;
 }
-std::string TagSet::get_file() {
+std::string TaggedFile::get_file() {
 	return file;
 }
-bool TagSet::get_error() {
+bool TaggedFile::get_error() {
 	return err;
 }

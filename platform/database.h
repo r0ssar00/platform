@@ -173,7 +173,7 @@ public:
 	int get_index() const;
 	str get_sql_string() const;
 	friend bool operator <(const Column&a, const Column&b);
-	str to_string();
+	str to_string() const;
 private:
 	str data_name; // stores the column name
 	db_types_t data_type;  // stores the column tyoe
